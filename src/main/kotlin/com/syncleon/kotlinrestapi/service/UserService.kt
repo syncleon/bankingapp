@@ -25,4 +25,9 @@ class UserService(@Autowired private val userRepo: UserRepo) {
             throw UserNotFoundException("User not found")
         } else User.toModel(user.get())
     }
+
+    fun getAll(): MutableList<User> {
+        val user = userRepo.findAll()
+        return User.toModelGetAll(user)
+    }
 }

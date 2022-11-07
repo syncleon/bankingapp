@@ -31,7 +31,7 @@ class UserController(@Autowired private val userService: UserService) {
     @GetMapping("/all")
     fun getUsers(): ResponseEntity<Any> {
         return try {
-            ResponseEntity.ok("Server work!")
+            ResponseEntity.ok(userService.getAll())
         } catch (e: Exception) {
             ResponseEntity.badRequest().body("Error")
         }

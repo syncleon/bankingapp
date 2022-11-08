@@ -16,10 +16,16 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/users")
-class UserController(@Autowired private val userService: UserService) {
+class UserController(
+    @Autowired
+    private val userService: UserService
+    ) {
 
     @PostMapping
-    fun registration(@RequestBody user: UserEntity): ResponseEntity<Any> {
+    @RequestMapping("/create")
+    fun registration(
+        @RequestBody
+        user: UserEntity): ResponseEntity<Any> {
         return try {
             userService.registration(user)
             ResponseEntity.ok("User created successful!")
@@ -33,7 +39,7 @@ class UserController(@Autowired private val userService: UserService) {
         return try {
             ResponseEntity.ok(userService.getAll())
         } catch (e: Exception) {
-            ResponseEntity.badRequest().body("Error")
+            ResponseEntity.badRequest().body(e.message)
         }
     }
 

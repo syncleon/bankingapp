@@ -10,10 +10,12 @@ import org.springframework.stereotype.Service
 
 
 @Service
-class UserService(@Autowired private val userRepo: UserRepo) {
+class UserService(
+    @Autowired
+    private val userRepo: UserRepo) {
 
     fun registration(user: UserEntity): UserEntity {
-        if (userRepo.findByUsername(user.username) != null) {
+        if (userRepo.findByUsername(user.username) == null) {
             throw UserAlreadyExistException("User already exist!")
         }
         return userRepo.save(user)
@@ -27,11 +29,6 @@ class UserService(@Autowired private val userRepo: UserRepo) {
     }
 
     fun getAll(): MutableList<User> {
-        val user = userRepo.findAll()
-        return if (user.first() == null) {
-            throw UserNotFoundException("User not found")
-        } else {
-            User.toModelGetAll(user)
-        }
+        return User.toModelGetAll(userRepo.findAll())
     }
 }

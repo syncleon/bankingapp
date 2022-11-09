@@ -22,7 +22,6 @@ class UserController(
     ) {
 
     @PostMapping
-    @RequestMapping("/create")
     fun registration(
         @RequestBody
         user: UserEntity): ResponseEntity<Any> {

@@ -6,7 +6,7 @@ import javax.persistence.*
 @Entity
 class UserEntity (
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Long = 0L,
     var username:String = "",
     var password:String = "",

@@ -11,5 +11,5 @@ class UserEntity (
     var username:String = "",
     var password:String = "",
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "user")
-    var wallets: List<WalletEntity> = emptyList()
+    var wallets: List<WalletEntity>
 )

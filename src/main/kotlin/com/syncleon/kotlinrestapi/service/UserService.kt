@@ -16,6 +16,7 @@ class UserService(
     @Autowired
     private val userRepo: UserRepo
     ) {
+
     fun registration(user: UserEntity): UserEntity {
         try {
             if (userRepo.findByUsername(user.username) != null) {
@@ -26,13 +27,22 @@ class UserService(
         }
         return userRepo.save(user)
     }
+
     fun getOne(id: Long): User {
         val user = userRepo.findById(id)
         return if (user.isEmpty) {
             throw UserNotFoundException("User not found")
         } else User.toModel(user.get())
     }
+
     fun getAll(): MutableList<User> {
         return User.toModelGetAll(userRepo.findAll())
+    }
+
+    fun deleteUser(id: Long) {
+        val user = userRepo.findById(id)
+        return if (user.isEmpty) {
+            throw UserNotFoundException("User not found")
+        } else userRepo.delete(user.get())
     }
 }

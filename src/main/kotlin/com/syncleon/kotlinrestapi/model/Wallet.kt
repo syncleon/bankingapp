@@ -2,7 +2,6 @@ package com.syncleon.kotlinrestapi.model
 
 import com.syncleon.kotlinrestapi.entity.WalletEntity
 
-@Suppress("NAME_SHADOWING")
 data class Wallet(
     val id:Long,
     val title:String,
@@ -22,13 +21,13 @@ data class Wallet(
         fun toModelGetAll(entity: MutableIterable<WalletEntity>): MutableList<Wallet> {
             val walletList = mutableListOf<Wallet>()
             for (wallet in entity) {
-                val wallet = Wallet(
+                val singleWallet = Wallet(
                     username = wallet.user?.username,
                     id = wallet.id,
                     title = wallet.title,
                     amount = wallet.amount,
                 )
-                walletList.add(wallet)
+                walletList.add(singleWallet)
             }
             return walletList
         }

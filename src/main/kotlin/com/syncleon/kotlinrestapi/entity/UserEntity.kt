@@ -6,10 +6,10 @@ import javax.persistence.*
 @Entity
 class UserEntity (
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
     var username:String = "",
     var password:String = "",
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "user")
-    var wallets: List<WalletEntity>
+    var wallets: List<WalletEntity> = emptyList()
 )

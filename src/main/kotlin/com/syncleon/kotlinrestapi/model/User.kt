@@ -3,7 +3,6 @@ package com.syncleon.kotlinrestapi.model
 import com.syncleon.kotlinrestapi.entity.UserEntity
 import java.util.stream.Collectors
 
-@Suppress("NAME_SHADOWING")
 data class User(
     val id: Long,
     val username: String,
@@ -20,12 +19,12 @@ data class User(
         fun toModelGetAll(entity: MutableIterable<UserEntity>): MutableList<User> {
             val userList = mutableListOf<User>()
             for (user in entity) {
-                val user = User(
+                val singleUser = User(
                     id = user.id,
                     username = user.username,
                     wallets = user.wallets.stream().map(Wallet::toModel).collect(Collectors.toList())
                 )
-                userList.add(user)
+                userList.add(singleUser)
             }
             return userList
         }

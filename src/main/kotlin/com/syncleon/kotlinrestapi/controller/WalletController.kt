@@ -33,4 +33,29 @@ class WalletController(
             ResponseEntity.badRequest().body(e.message)
         }
     }
+
+    @PutMapping("{id}")
+    fun updateWalletTitle(
+        @PathVariable id: Long,
+        @RequestBody wallet: WalletEntity
+    ): ResponseEntity<Any> {
+        return try {
+            walletService.updateWalletTitle(id, wallet)
+            ResponseEntity.ok("Wallet updated")
+        } catch (e: Exception) {
+            ResponseEntity.badRequest().body("Wallet not found")
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    fun deleteWallet(
+        @PathVariable id: Long
+    ): ResponseEntity<Any> {
+        return try {
+            walletService.deleteWallet(id)
+            ResponseEntity.ok("Wallet deleted.")
+        } catch (e: Exception) {
+            ResponseEntity.badRequest().body("Wallet not found")
+        }
+    }
 }

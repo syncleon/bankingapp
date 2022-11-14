@@ -10,7 +10,7 @@ import javax.persistence.ManyToOne
 @Entity
 class WalletEntity(
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
     var title:String = "",
     var amount: Double = 0.0,

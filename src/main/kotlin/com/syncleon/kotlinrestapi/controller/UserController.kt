@@ -4,6 +4,8 @@ import com.syncleon.kotlinrestapi.entity.UserEntity
 import com.syncleon.kotlinrestapi.exception.UserAlreadyExistException
 import com.syncleon.kotlinrestapi.exception.UserNotFoundException
 import com.syncleon.kotlinrestapi.service.UserService
+import org.hibernate.annotations.Cascade
+import org.hibernate.annotations.CascadeType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -37,8 +39,10 @@ class UserController(
         }
     }
 
-    @GetMapping
-    fun getUser(@RequestParam id: Long): ResponseEntity<Any> {
+    @GetMapping("/user/{id}")
+    fun getUser(
+        @PathVariable id: Long
+    ): ResponseEntity<Any> {
         return try {
             ResponseEntity.ok(userService.getUser(id))
         } catch (e: UserNotFoundException) {
@@ -47,7 +51,9 @@ class UserController(
     }
 
     @DeleteMapping("/{id}")
-    fun deleteUserById(@PathVariable id: Long): ResponseEntity<Any> {
+    fun deleteUserById(
+        @PathVariable id: Long,
+    ): ResponseEntity<Any> {
         return try {
             userService.deleteUser(id)
             ResponseEntity.ok("User with id=$id deleted.")

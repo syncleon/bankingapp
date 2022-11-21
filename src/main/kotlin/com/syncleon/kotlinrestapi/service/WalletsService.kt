@@ -44,22 +44,28 @@ class WalletsService(
         }
     }
 
-    fun updateWalletTitle(id: Long, wallet: WalletEntity): WalletEntity {
+    fun updateWalletTitle(userId: Long, walletId: Long, wallet: WalletEntity): WalletEntity {
         val singleWallet = walletRepo
-            .findById(id)
-            .orElseThrow { WalletNotFoundException("Wallet with id {$id} not found.") }
-        if(wallet.title == singleWallet.title){
-            throw Exception("Wallet  ${wallet.title} already exists!")
+            .findById(walletId)
+            .orElseThrow { WalletNotFoundException("Wallet with id {$walletId} not found.") }
+        val userWallets = userRepo.findById(userId).get().wallets
+        val walletTitles = userWallets.map { it.title }
+        when (val walletTitle = wallet.title) {
+            in walletTitles -> throw Exception("Wallet already exist")
+            else -> singleWallet.title = walletTitle
         }
-        singleWallet.title = wallet.title
         return walletRepo.save(singleWallet)
     }
 
-    fun addMoneyToWallet(id: Long, wallet: WalletEntity): WalletEntity {
+    fun addMoney(id: Long, wallet: WalletEntity): WalletEntity {
         val singleWallet = walletRepo
             .findById(id)
             .orElseThrow { WalletNotFoundException("Wallet with id {$id} not found.") }
-        singleWallet.balance = wallet.balance
+        val walletBalance = wallet.balance
+        when {
+            walletBalance < 0 -> throw Exception("Unable to add negative value.")
+            else -> singleWallet.balance += walletBalance
+        }
         return walletRepo.save(singleWallet)
     }
 }

@@ -1,1 +1,0 @@
-ALTER TABLE wallets ADD COLUMN description VARCHAR(255);

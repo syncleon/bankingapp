@@ -25,22 +25,41 @@ class WalletsService(
         return walletRepo.save(wallet)
     }
 
-    fun getAll(): MutableList<Wallet> {
+    fun getWallets(): MutableList<Wallet> {
         return Wallet.toModelGetAll(walletRepo.findAll())
     }
 
-    fun deleteWallet(id: Long) {
+    fun deleteWalletById(id: Long) {
         val wallet = walletRepo.findById(id).get()
         return walletRepo.delete(wallet)
+    }
+
+    fun deleteWalletsUserId(id: Long) {
+        val wallets = userRepo.findById(id).get().wallets
+        for (wal in wallets) {
+            if (wallets.isEmpty()) {
+                throw Exception("No wallets for user $id exists!")
+            }
+            deleteWalletById(wal.id)
+        }
     }
 
     fun updateWalletTitle(id: Long, wallet: WalletEntity): WalletEntity {
         val singleWallet = walletRepo
             .findById(id)
             .orElseThrow { WalletNotFoundException("Wallet with id {$id} not found.") }
+        if(wallet.title == singleWallet.title){
+            throw Exception("Wallet  ${wallet.title} already exists!")
+        }
         singleWallet.title = wallet.title
         return walletRepo.save(singleWallet)
     }
 
-    fun amountWallet() {}
+    fun addMoneyToWallet(id: Long, wallet: WalletEntity): WalletEntity {
+        val singleWallet = walletRepo
+            .findById(id)
+            .orElseThrow { WalletNotFoundException("Wallet with id {$id} not found.") }
+        singleWallet.balance = wallet.balance
+        return walletRepo.save(singleWallet)
+    }
 }

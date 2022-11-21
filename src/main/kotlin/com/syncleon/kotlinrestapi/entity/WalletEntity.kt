@@ -9,7 +9,7 @@ class WalletEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
     var title:String = "",
-    var amount: Double = 0.0,
+    var balance: Double = 0.0,
     var description: String = "",
     @ManyToOne
     @JoinColumn(name = "user_id")

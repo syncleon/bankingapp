@@ -4,8 +4,6 @@ import com.syncleon.kotlinrestapi.entity.UserEntity
 import com.syncleon.kotlinrestapi.exception.UserAlreadyExistException
 import com.syncleon.kotlinrestapi.exception.UserNotFoundException
 import com.syncleon.kotlinrestapi.service.UserService
-import org.hibernate.annotations.Cascade
-import org.hibernate.annotations.CascadeType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*

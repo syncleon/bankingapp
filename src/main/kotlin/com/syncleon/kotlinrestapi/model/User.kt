@@ -6,6 +6,7 @@ import java.util.stream.Collectors
 data class User(
     val id: Long,
     val username: String,
+    val created_at: String?,
     val wallets: MutableList<Wallet>
     ) {
     companion object {
@@ -13,7 +14,9 @@ data class User(
             return User(
                 id = entity.id,
                 username = entity.username,
-                wallets = entity.wallets.stream().map(Wallet::toModel).collect(Collectors.toList()))
+                created_at = entity.created_at,
+                wallets = entity.wallets.stream().map(Wallet::toModel).collect(Collectors.toList())
+            )
         }
 
         fun toModelGetAll(entity: MutableIterable<UserEntity>): MutableList<User> {
@@ -22,6 +25,7 @@ data class User(
                 val singleUser = User(
                     id = user.id,
                     username = user.username,
+                    created_at = user.created_at,
                     wallets = user.wallets.stream().map(Wallet::toModel).collect(Collectors.toList())
                 )
                 userList.add(singleUser)

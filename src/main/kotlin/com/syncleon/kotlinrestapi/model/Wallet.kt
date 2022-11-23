@@ -7,7 +7,8 @@ data class Wallet(
     val title:String,
     val balance: Double,
     val username: String?,
-    val desc:String?
+    val desc:String?,
+    val created_at: String?
     ) {
     companion object {
         fun toModel(entity: WalletEntity): Wallet {
@@ -16,7 +17,8 @@ data class Wallet(
                 title = entity.title,
                 balance = entity.balance,
                 username = entity.user?.username,
-                desc = entity.description
+                desc = entity.description,
+                created_at = entity.created_at
             )
         }
 
@@ -28,7 +30,8 @@ data class Wallet(
                     id = wallet.id,
                     title = wallet.title,
                     balance = wallet.balance,
-                    desc = wallet.description
+                    desc = wallet.description,
+                    created_at = wallet.created_at
                 )
                 walletList.add(singleWallet)
             }

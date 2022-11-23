@@ -8,6 +8,9 @@ import com.syncleon.kotlinrestapi.repository.UserRepo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.stereotype.Service
+import java.time.Instant
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 
 @Service
@@ -17,6 +20,11 @@ class UserService(
     ) {
 
     fun registration(user: UserEntity): UserEntity {
+        user.created_at = DateTimeFormatter
+            .ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
+            .withZone(ZoneOffset.UTC)
+            .format(Instant.now())
+
         try {
             if (userRepo.findByUsername(user.username) != null) {
                 throw UserAlreadyExistException("User already exists")

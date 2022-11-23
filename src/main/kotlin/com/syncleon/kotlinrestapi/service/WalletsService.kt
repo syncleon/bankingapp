@@ -8,6 +8,9 @@ import com.syncleon.kotlinrestapi.repository.UserRepo
 import com.syncleon.kotlinrestapi.repository.WalletRepo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.time.Instant
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 @Service
 class WalletsService(
@@ -21,7 +24,16 @@ class WalletsService(
         if (user.isEmpty) {
             throw UserNotFoundException("Wallet cant be added to not created user")
         }
+        val userWallets = userRepo.findById(userId).get().wallets
+        val walletTitles = userWallets.map { it.title }
+        when (val walletTitle = wallet.title) {
+            in walletTitles -> throw Exception("$walletTitle name already exist, select another name")
+        }
         wallet.user = user.get()
+        wallet.created_at = DateTimeFormatter
+            .ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
+            .withZone(ZoneOffset.UTC)
+            .format(Instant.now())
         return walletRepo.save(wallet)
     }
 
@@ -51,7 +63,7 @@ class WalletsService(
         val userWallets = userRepo.findById(userId).get().wallets
         val walletTitles = userWallets.map { it.title }
         when (val walletTitle = wallet.title) {
-            in walletTitles -> throw Exception("Wallet already exist")
+            in walletTitles -> throw Exception("$walletTitle name already exist")
             else -> singleWallet.title = walletTitle
         }
         return walletRepo.save(singleWallet)

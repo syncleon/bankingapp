@@ -11,6 +11,7 @@ class UserEntity (
     val id: Long = 0L,
     var username:String = "",
     var password:String = "",
+    var created_at: String = "",
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "user")
     var wallets: List<WalletEntity> = emptyList()
 )

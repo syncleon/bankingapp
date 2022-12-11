@@ -26,7 +26,7 @@ class WalletController(
         }
     }
 
-    @GetMapping("/all")
+    @GetMapping("/getAll")
     fun getAllWallets(): ResponseEntity<Any> {
         return try {
             ResponseEntity.ok(walletService.getWallets())
@@ -35,34 +35,35 @@ class WalletController(
         }
     }
 
-    @PutMapping("/wallet/user={userId}wallet={walletId}/title")
-    fun updateWalletTitle(
+    @PutMapping("/user{userId}wallet{walletId}/title")
+    fun updateTitle(
         @PathVariable userId:Long,
         @PathVariable walletId: Long,
         @RequestBody wallet: WalletEntity
     ): ResponseEntity<Any> {
         return try {
             walletService.updateWalletTitle(userId, walletId, wallet)
-            ResponseEntity.ok(HttpStatus.OK)
+            ResponseEntity.ok("Title updated!")
         } catch (e: Exception) {
             ResponseEntity.badRequest().body(e.message)
         }
     }
 
-    @PutMapping("/{id}/balance/add")
-    fun addMoneyOnWallet(
+    @PutMapping("/wallet{id}user{userId}/addMoney")
+    fun addMoney(
         @PathVariable id: Long,
+        @PathVariable userId:Long,
         @RequestBody wallet: WalletEntity
     ): ResponseEntity<Any> {
         return try {
-            walletService.addMoney(id, wallet)
-            ResponseEntity.ok(HttpStatus.OK)
+            walletService.addMoney(id, userId, wallet)
+            ResponseEntity.ok("Added!")
         } catch (e: Exception) {
             ResponseEntity.badRequest().body(e.message)
         }
     }
 
-    @DeleteMapping("/wallet/{id}")
+    @DeleteMapping("/deleteWallet{id}")
     fun deleteWallet(
         @PathVariable id: Long
     ): ResponseEntity<Any> {
@@ -74,13 +75,13 @@ class WalletController(
         }
     }
 
-    @DeleteMapping("/user/{id}/delete/wallets")
+    @DeleteMapping("/user{id}/deleteWallets")
     fun deleteUserWallets(
         @PathVariable id: Long
     ): ResponseEntity<Any> {
         return try {
             walletService.deleteWalletsUserId(id)
-            ResponseEntity.ok("Wallet deleted.")
+            ResponseEntity.ok("Wallets deleted.")
         } catch (e: Exception) {
             ResponseEntity.badRequest().body(e.message)
         }

@@ -5,8 +5,9 @@ import java.util.stream.Collectors
 
 data class User(
     val id: Long,
-    val username: String,
-    val created_at: String?,
+    val username: String?,
+    val createdAt: String?,
+    val moneyBalance: Double?,
     val wallets: MutableList<Wallet>
     ) {
     companion object {
@@ -14,7 +15,8 @@ data class User(
             return User(
                 id = entity.id,
                 username = entity.username,
-                created_at = entity.created_at,
+                createdAt = entity.createdAt,
+                moneyBalance = entity.moneyBalance,
                 wallets = entity.wallets.stream().map(Wallet::toModel).collect(Collectors.toList())
             )
         }
@@ -25,7 +27,8 @@ data class User(
                 val singleUser = User(
                     id = user.id,
                     username = user.username,
-                    created_at = user.created_at,
+                    createdAt = user.createdAt,
+                    moneyBalance = user.moneyBalance,
                     wallets = user.wallets.stream().map(Wallet::toModel).collect(Collectors.toList())
                 )
                 userList.add(singleUser)

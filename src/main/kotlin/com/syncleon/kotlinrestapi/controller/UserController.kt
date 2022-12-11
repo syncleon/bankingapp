@@ -15,20 +15,34 @@ class UserController(
     private val userService: UserService
     ) {
 
-    @PostMapping("/create")
-    fun registration(
+    @PostMapping("/add")
+    fun create(
         @RequestBody
         user: UserEntity
     ): ResponseEntity<Any> {
         return try {
-            userService.registration(user)
-            ResponseEntity.ok("User created successful!")
+            ResponseEntity.ok(userService.create(user))
         } catch (e: UserAlreadyExistException) {
             ResponseEntity.badRequest().body(e.message)
         }
     }
 
-    @GetMapping("/all")
+    @PutMapping("user{id}/amount")
+    fun updateBalance(
+        @PathVariable
+        id: Long,
+        @RequestBody
+        user: UserEntity
+    ): ResponseEntity<Any> {
+        return try {
+            userService.updateBalance(id, user)
+            ResponseEntity.accepted().body("Updated!")
+        } catch (e: Exception) {
+            ResponseEntity.badRequest().body(e.message)
+        }
+    }
+
+    @GetMapping("/getAll")
     fun getUsers(): ResponseEntity<Any> {
         return try {
             ResponseEntity.ok(userService.getUsers())
@@ -37,7 +51,7 @@ class UserController(
         }
     }
 
-    @GetMapping("/user/{id}")
+    @GetMapping("/user{id}")
     fun getUser(
         @PathVariable id: Long
     ): ResponseEntity<Any> {
@@ -48,13 +62,12 @@ class UserController(
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete{id}")
     fun deleteUserById(
-        @PathVariable id: Long,
+        @PathVariable id: Long
     ): ResponseEntity<Any> {
         return try {
-            userService.deleteUser(id)
-            ResponseEntity.ok("User with id=$id deleted.")
+            ResponseEntity.ok(userService.deleteUser(id))
         } catch (e: UserNotFoundException) {
             ResponseEntity.badRequest().body(e.message)
         }

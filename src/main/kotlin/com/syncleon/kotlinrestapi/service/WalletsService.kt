@@ -1,6 +1,8 @@
 package com.syncleon.kotlinrestapi.service
 
+import com.syncleon.kotlinrestapi.entity.UserEntity
 import com.syncleon.kotlinrestapi.entity.WalletEntity
+import com.syncleon.kotlinrestapi.exception.NotEnoughMoneyException
 import com.syncleon.kotlinrestapi.exception.UserNotFoundException
 import com.syncleon.kotlinrestapi.exception.WalletNotFoundException
 import com.syncleon.kotlinrestapi.model.Wallet
@@ -14,23 +16,29 @@ import java.time.format.DateTimeFormatter
 
 @Service
 class WalletsService(
+
     @Autowired
     val walletRepo: WalletRepo,
     @Autowired
     val userRepo:UserRepo
 ) {
-    fun addWallet(wallet: WalletEntity, userId: Long): WalletEntity {
+    fun addWallet(
+        wallet: WalletEntity,
+        userId: Long
+    ): WalletEntity {
         val user = userRepo.findById(userId)
         if (user.isEmpty) {
             throw UserNotFoundException("Wallet cant be added to not created user")
         }
         val userWallets = userRepo.findById(userId).get().wallets
         val walletTitles = userWallets.map { it.title }
-        when (val walletTitle = wallet.title) {
+        when (
+            val walletTitle = wallet.title
+        ) {
             in walletTitles -> throw Exception("$walletTitle name already exist, select another name")
         }
         wallet.user = user.get()
-        wallet.created_at = DateTimeFormatter
+        wallet.createdAt = DateTimeFormatter
             .ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
             .withZone(ZoneOffset.UTC)
             .format(Instant.now())
@@ -41,12 +49,62 @@ class WalletsService(
         return Wallet.toModelGetAll(walletRepo.findAll())
     }
 
-    fun deleteWalletById(id: Long) {
+    fun addMoney(walletId: Long,
+                 userId: Long,
+                 wallet: WalletEntity
+    ): WalletEntity? {
+        val singleWallet = walletRepo
+            .findById(walletId)
+            .orElseThrow {
+                WalletNotFoundException("Wallet with id {$walletId} not found.") }
+        val singleUser = userRepo
+            .findById(userId)
+            .orElseThrow {
+                UserNotFoundException("User with id: $userId not found") }
+        var parentUserBalance = singleUser.moneyBalance
+        val amount = wallet.amount
+        if (amount < 0)
+            throw Exception("Cant transfer negative value")
+        else if (amount > parentUserBalance)
+            throw NotEnoughMoneyException("Not enough money, {$parentUserBalance} ")
+        else {
+            singleWallet.amount += amount
+            parentUserBalance -= amount
+        }
+        singleUser.moneyBalance = parentUserBalance
+        userRepo.save(singleUser)
+        return walletRepo.save(singleWallet)}
+
+
+    fun updateWalletTitle(
+        userId: Long,
+        walletId: Long,
+        wallet: WalletEntity
+    ): WalletEntity {
+        val singleWallet = walletRepo
+            .findById(walletId)
+            .orElseThrow { WalletNotFoundException("Wallet with id {$walletId} not found.") }
+        val userWallets = userRepo.findById(userId).get().wallets
+        val walletTitles = userWallets.map { it.title }
+        when (
+            val walletTitle = wallet.title
+        ) {
+            in walletTitles -> throw Exception("$walletTitle name already exist")
+            else -> singleWallet.title = walletTitle
+        }
+        return walletRepo.save(singleWallet)
+    }
+
+    fun deleteWalletById(
+        id: Long
+    ) {
         val wallet = walletRepo.findById(id).get()
         return walletRepo.delete(wallet)
     }
 
-    fun deleteWalletsUserId(id: Long) {
+    fun deleteWalletsUserId(
+        id: Long
+    ) {
         val wallets = userRepo.findById(id).get().wallets
         for (wal in wallets) {
             if (wallets.isEmpty()) {
@@ -54,30 +112,5 @@ class WalletsService(
             }
             deleteWalletById(wal.id)
         }
-    }
-
-    fun updateWalletTitle(userId: Long, walletId: Long, wallet: WalletEntity): WalletEntity {
-        val singleWallet = walletRepo
-            .findById(walletId)
-            .orElseThrow { WalletNotFoundException("Wallet with id {$walletId} not found.") }
-        val userWallets = userRepo.findById(userId).get().wallets
-        val walletTitles = userWallets.map { it.title }
-        when (val walletTitle = wallet.title) {
-            in walletTitles -> throw Exception("$walletTitle name already exist")
-            else -> singleWallet.title = walletTitle
-        }
-        return walletRepo.save(singleWallet)
-    }
-
-    fun addMoney(id: Long, wallet: WalletEntity): WalletEntity {
-        val singleWallet = walletRepo
-            .findById(id)
-            .orElseThrow { WalletNotFoundException("Wallet with id {$id} not found.") }
-        val walletBalance = wallet.balance
-        when {
-            walletBalance < 0 -> throw Exception("Unable to add negative value.")
-            else -> singleWallet.balance += walletBalance
-        }
-        return walletRepo.save(singleWallet)
     }
 }

@@ -5,20 +5,20 @@ import com.syncleon.kotlinrestapi.entity.WalletEntity
 data class Wallet(
     val id:Long,
     val title:String,
-    val balance: Double,
+    val amount: Double,
     val username: String?,
     val desc:String?,
-    val created_at: String?
+    val createdAt: String?
     ) {
     companion object {
         fun toModel(entity: WalletEntity): Wallet {
             return Wallet(
                 id = entity.id,
                 title = entity.title,
-                balance = entity.balance,
+                amount = entity.amount,
                 username = entity.user?.username,
                 desc = entity.description,
-                created_at = entity.created_at
+                createdAt = entity.createdAt
             )
         }
 
@@ -29,9 +29,9 @@ data class Wallet(
                     username = wallet.user?.username,
                     id = wallet.id,
                     title = wallet.title,
-                    balance = wallet.balance,
+                    amount = wallet.amount,
                     desc = wallet.description,
-                    created_at = wallet.created_at
+                    createdAt = wallet.createdAt
                 )
                 walletList.add(singleWallet)
             }

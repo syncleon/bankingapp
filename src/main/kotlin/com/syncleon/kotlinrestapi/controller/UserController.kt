@@ -15,34 +15,7 @@ class UserController(
     private val userService: UserService
     ) {
 
-    @PostMapping("/add")
-    fun create(
-        @RequestBody
-        user: UserEntity
-    ): ResponseEntity<Any> {
-        return try {
-            ResponseEntity.ok(userService.create(user))
-        } catch (e: UserAlreadyExistException) {
-            ResponseEntity.badRequest().body(e.message)
-        }
-    }
-
-    @PutMapping("user{id}/amount")
-    fun updateBalance(
-        @PathVariable
-        id: Long,
-        @RequestBody
-        user: UserEntity
-    ): ResponseEntity<Any> {
-        return try {
-            userService.updateBalance(id, user)
-            ResponseEntity.accepted().body("Updated!")
-        } catch (e: Exception) {
-            ResponseEntity.badRequest().body(e.message)
-        }
-    }
-
-    @GetMapping("/getAll")
+    @GetMapping("/all")
     fun getUsers(): ResponseEntity<Any> {
         return try {
             ResponseEntity.ok(userService.getUsers())
@@ -51,23 +24,47 @@ class UserController(
         }
     }
 
-    @GetMapping("/user{id}")
+    @GetMapping
     fun getUser(
-        @PathVariable id: Long
+        @RequestParam userId: Long
     ): ResponseEntity<Any> {
         return try {
-            ResponseEntity.ok(userService.getUser(id))
+            ResponseEntity.ok(userService.getUser(userId))
         } catch (e: UserNotFoundException) {
             ResponseEntity.badRequest().body(e.message)
         }
     }
 
-    @DeleteMapping("/delete{id}")
-    fun deleteUserById(
-        @PathVariable id: Long
+    @PostMapping("/create")
+    fun create(
+        @RequestBody user: UserEntity
     ): ResponseEntity<Any> {
         return try {
-            ResponseEntity.ok(userService.deleteUser(id))
+            ResponseEntity.ok(userService.create(user))
+        } catch (e: UserAlreadyExistException) {
+            ResponseEntity.badRequest().body(e.message)
+        }
+    }
+
+    @PutMapping("/updateCurrentLimit")
+    fun updateCurrentLimit(
+        @RequestParam userId: Long,
+        @RequestBody user: UserEntity
+    ): ResponseEntity<Any> {
+        return try {
+            userService.updateCurrentLimit(userId, user)
+            ResponseEntity.accepted().body("Current limit updated!")
+        } catch (e: Exception) {
+            ResponseEntity.badRequest().body(e.message)
+        }
+    }
+
+    @DeleteMapping("/delete")
+    fun deleteUserById(
+        @RequestParam userId: Long
+    ): ResponseEntity<Any> {
+        return try {
+            ResponseEntity.ok(userService.deleteUser(userId))
         } catch (e: UserNotFoundException) {
             ResponseEntity.badRequest().body(e.message)
         }

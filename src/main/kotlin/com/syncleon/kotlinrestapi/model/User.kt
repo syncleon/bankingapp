@@ -7,8 +7,8 @@ data class User(
     val id: Long,
     val username: String?,
     val createdAt: String?,
-    val moneyBalance: Double?,
-    val wallets: MutableList<Wallet>
+    val currentLimit: Double?,
+    val cards: MutableList<Card>
     ) {
     companion object {
         fun toModel(entity: UserEntity): User {
@@ -16,8 +16,8 @@ data class User(
                 id = entity.id,
                 username = entity.username,
                 createdAt = entity.createdAt,
-                moneyBalance = entity.moneyBalance,
-                wallets = entity.wallets.stream().map(Wallet::toModel).collect(Collectors.toList())
+                currentLimit = entity.currentLimit,
+                cards = entity.cards.stream().map(Card::toModel).collect(Collectors.toList())
             )
         }
 
@@ -28,8 +28,8 @@ data class User(
                     id = user.id,
                     username = user.username,
                     createdAt = user.createdAt,
-                    moneyBalance = user.moneyBalance,
-                    wallets = user.wallets.stream().map(Wallet::toModel).collect(Collectors.toList())
+                    currentLimit = user.currentLimit,
+                    cards = user.cards.stream().map(Card::toModel).collect(Collectors.toList())
                 )
                 userList.add(singleUser)
             }

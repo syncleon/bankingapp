@@ -16,8 +16,8 @@ class UserEntity (
     var password:String = "",
     @Column(name = "created_at")
     var createdAt: String = "",
-    @Column(name = "money_balance")
-    var moneyBalance: Double = 0.0,
+    @Column(name = "current_limit")
+    var currentLimit: Double = 0.0,
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "user")
-    var wallets: List<WalletEntity> = emptyList()
+    var cards: List<CardEntity> = emptyList()
 )

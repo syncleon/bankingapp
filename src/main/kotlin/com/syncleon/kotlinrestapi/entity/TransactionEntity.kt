@@ -3,8 +3,8 @@ package com.syncleon.kotlinrestapi.entity
 import javax.persistence.*
 
 @Entity
-@Table(name = "money_transfer")
-class MoneyTransferEntity (
+@Table(name = "transactions")
+class TransactionEntity (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
@@ -14,12 +14,12 @@ class MoneyTransferEntity (
     val amount: Double = 0.0,
 
     @ManyToOne
-    @JoinColumn(name = "sender_id")
-    var senderId: WalletEntity?,
+    @JoinColumn(name = "sender_card_id")
+    var senderId: CardEntity?,
 
     @ManyToOne
-    @JoinColumn(name = "receiver_id")
-    var receiverId: WalletEntity?,
+    @JoinColumn(name = "receiver_card_id")
+    var receiverId: CardEntity?,
 
     @Column(name = "transfer_date")
     var transferDate: String = "",

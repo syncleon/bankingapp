@@ -1,9 +1,10 @@
 package com.syncleon.kotlinrestapi.controller
 
+import com.syncleon.kotlinrestapi.entity.MoneyTransferEntity
 import com.syncleon.kotlinrestapi.entity.WalletEntity
+import com.syncleon.kotlinrestapi.service.MoneyTransferService
 import com.syncleon.kotlinrestapi.service.WalletsService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -11,7 +12,9 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/wallets")
 class WalletController(
     @Autowired
-    val walletService:WalletsService
+    val walletService:WalletsService,
+    @Autowired
+    val moneyTransferService: MoneyTransferService
 ) {
     @PostMapping
     fun addWallet(
@@ -21,6 +24,20 @@ class WalletController(
         return try {
             walletService.addWallet(wallet, userId)
             ResponseEntity.ok("Wallet: \"${wallet.title}\", added to user: \"$userId\"")
+        } catch (e: Exception) {
+            ResponseEntity.badRequest().body(e.message)
+        }
+    }
+
+    @PostMapping("/transfer")
+    fun moneyTransfer(
+        @RequestBody moneyTransfer: MoneyTransferEntity,
+        @RequestParam senderId: Long,
+        @RequestParam receiverId: Long
+    ): ResponseEntity<Any> {
+        return try {
+            moneyTransferService.transferMoney(senderId, receiverId, moneyTransfer)
+            ResponseEntity.ok("received!")
         } catch (e: Exception) {
             ResponseEntity.badRequest().body(e.message)
         }
@@ -37,7 +54,7 @@ class WalletController(
 
     @PutMapping("/user{userId}wallet{walletId}/title")
     fun updateTitle(
-        @PathVariable userId:Long,
+        @PathVariable userId: Long,
         @PathVariable walletId: Long,
         @RequestBody wallet: WalletEntity
     ): ResponseEntity<Any> {
@@ -52,7 +69,7 @@ class WalletController(
     @PutMapping("/wallet{id}user{userId}/addMoney")
     fun addMoney(
         @PathVariable id: Long,
-        @PathVariable userId:Long,
+        @PathVariable userId: Long,
         @RequestBody wallet: WalletEntity
     ): ResponseEntity<Any> {
         return try {

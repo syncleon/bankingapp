@@ -19,5 +19,10 @@ class WalletEntity(
     var createdAt: String = "",
     @ManyToOne
     @JoinColumn(name = "user_id")
-    var user:UserEntity?
+    var user:UserEntity?,
+
+    @OneToMany(mappedBy = "senderId", fetch = FetchType.EAGER)
+    var senders: List<MoneyTransferEntity> = emptyList(),
+    @OneToMany(mappedBy = "receiverId", fetch = FetchType.EAGER)
+    var receivers: List<MoneyTransferEntity> = emptyList()
 )

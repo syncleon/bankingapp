@@ -1,11 +1,12 @@
 package com.syncleon.kotlinrestapi.service
 
-import com.syncleon.kotlinrestapi.entity.UserEntity
+import com.syncleon.kotlinrestapi.entity.MoneyTransferEntity
 import com.syncleon.kotlinrestapi.entity.WalletEntity
 import com.syncleon.kotlinrestapi.exception.NotEnoughMoneyException
 import com.syncleon.kotlinrestapi.exception.UserNotFoundException
 import com.syncleon.kotlinrestapi.exception.WalletNotFoundException
 import com.syncleon.kotlinrestapi.model.Wallet
+import com.syncleon.kotlinrestapi.repository.MoneyTransferRepo
 import com.syncleon.kotlinrestapi.repository.UserRepo
 import com.syncleon.kotlinrestapi.repository.WalletRepo
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,12 +21,10 @@ class WalletsService(
     @Autowired
     val walletRepo: WalletRepo,
     @Autowired
-    val userRepo:UserRepo
+    val userRepo:UserRepo,
+
 ) {
-    fun addWallet(
-        wallet: WalletEntity,
-        userId: Long
-    ): WalletEntity {
+    fun addWallet(wallet: WalletEntity, userId: Long): WalletEntity {
         val user = userRepo.findById(userId)
         if (user.isEmpty) {
             throw UserNotFoundException("Wallet cant be added to not created user")
@@ -49,10 +48,7 @@ class WalletsService(
         return Wallet.toModelGetAll(walletRepo.findAll())
     }
 
-    fun addMoney(walletId: Long,
-                 userId: Long,
-                 wallet: WalletEntity
-    ): WalletEntity? {
+    fun addMoney(walletId: Long, userId: Long, wallet: WalletEntity): WalletEntity? {
         val singleWallet = walletRepo
             .findById(walletId)
             .orElseThrow {
@@ -61,26 +57,22 @@ class WalletsService(
             .findById(userId)
             .orElseThrow {
                 UserNotFoundException("User with id: $userId not found") }
-        var parentUserBalance = singleUser.moneyBalance
+        var userBalance = singleUser.moneyBalance
         val amount = wallet.amount
         if (amount < 0)
-            throw Exception("Cant transfer negative value")
-        else if (amount > parentUserBalance)
-            throw NotEnoughMoneyException("Not enough money, {$parentUserBalance} ")
+            throw Exception("Cant add negative value")
+        else if (amount > userBalance)
+            throw NotEnoughMoneyException("Not enough money! ")
         else {
-            singleWallet.amount += amount
-            parentUserBalance -= amount
+            singleWallet.amount.plus(amount)
+            userBalance -= amount
         }
-        singleUser.moneyBalance = parentUserBalance
+        singleUser.moneyBalance = userBalance
         userRepo.save(singleUser)
         return walletRepo.save(singleWallet)}
 
 
-    fun updateWalletTitle(
-        userId: Long,
-        walletId: Long,
-        wallet: WalletEntity
-    ): WalletEntity {
+    fun updateWalletTitle(userId: Long, walletId: Long, wallet: WalletEntity): WalletEntity {
         val singleWallet = walletRepo
             .findById(walletId)
             .orElseThrow { WalletNotFoundException("Wallet with id {$walletId} not found.") }
@@ -95,16 +87,12 @@ class WalletsService(
         return walletRepo.save(singleWallet)
     }
 
-    fun deleteWalletById(
-        id: Long
-    ) {
+    fun deleteWalletById(id: Long) {
         val wallet = walletRepo.findById(id).get()
         return walletRepo.delete(wallet)
     }
 
-    fun deleteWalletsUserId(
-        id: Long
-    ) {
+    fun deleteWalletsUserId(id: Long) {
         val wallets = userRepo.findById(id).get().wallets
         for (wal in wallets) {
             if (wallets.isEmpty()) {

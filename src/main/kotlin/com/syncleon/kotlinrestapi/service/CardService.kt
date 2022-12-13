@@ -35,15 +35,17 @@ class CardService(
             in cardNames -> throw Exception("$cardName name already exist, select another name")
         }
         cardEntity.user = user.get()
-        cardEntity.createdAt = DateTimeFormatter
-            .ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
-            .withZone(ZoneOffset.UTC)
-            .format(Instant.now())
+        cardEntity.createdAt = System.currentTimeMillis().toString()
         return cardRepo.save(cardEntity)
     }
 
     fun getAllCards(): MutableList<Card> {
         return Card.toModelGetAll(cardRepo.findAll())
+    }
+
+    fun getCard(cardId: Long): Card{
+        return Card.toModel(cardRepo.findById(cardId).get())
+
     }
 
     fun amountCard(cardId: Long, userId: Long, cardEntity: CardEntity): CardEntity? {

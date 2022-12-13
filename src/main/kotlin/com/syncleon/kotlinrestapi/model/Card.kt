@@ -1,8 +1,9 @@
 package com.syncleon.kotlinrestapi.model
 
 import com.syncleon.kotlinrestapi.entity.CardEntity
+import com.syncleon.kotlinrestapi.entity.TransactionEntity
 
-data class Card(
+data class Card (
     val id:Long,
     val title:String,
     val cardLimit: Double,
@@ -16,19 +17,19 @@ data class Card(
                 title = cardEntity.cardName,
                 cardLimit = cardEntity.cardLimit,
                 username = cardEntity.user?.username,
-                createdAt = cardEntity.createdAt
+                createdAt = cardEntity.createdAt,
             )
         }
 
         fun toModelGetAll(entityList: MutableIterable<CardEntity>): MutableList<Card> {
             val cardList = mutableListOf<Card>()
-            for (entity in entityList) {
+            for (cardEntity in entityList) {
                 val singleCard = Card(
-                    username = entity.user?.username,
-                    id = entity.id,
-                    title = entity.cardName,
-                    cardLimit = entity.cardLimit,
-                    createdAt = entity.createdAt
+                    username = cardEntity.user?.username,
+                    id = cardEntity.id,
+                    title = cardEntity.cardName,
+                    cardLimit = cardEntity.cardLimit,
+                    createdAt = cardEntity.createdAt,
                 )
                 cardList.add(singleCard)
             }

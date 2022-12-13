@@ -23,6 +23,7 @@ class TransactionService (
 
         transactionEntity.senderId = sender
         transactionEntity.receiverId = receiver
+        transactionEntity.transferDate = System.currentTimeMillis().toString()
 
         val senderValue = sender.cardLimit
         val amountValue = transactionEntity.amount

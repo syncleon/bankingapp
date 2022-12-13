@@ -2,6 +2,7 @@ package com.syncleon.kotlinrestapi.controller
 
 import com.syncleon.kotlinrestapi.entity.TransactionEntity
 import com.syncleon.kotlinrestapi.entity.CardEntity
+import com.syncleon.kotlinrestapi.exception.UserNotFoundException
 import com.syncleon.kotlinrestapi.service.TransactionService
 import com.syncleon.kotlinrestapi.service.CardService
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,6 +26,18 @@ class CardController(
             ResponseEntity.badRequest().body(e.message)
         }
     }
+
+    @GetMapping
+    fun getCardById(
+        @RequestParam cardId: Long
+    ): ResponseEntity<Any> {
+        return try {
+            ResponseEntity.ok(cardService.getCard(cardId))
+        } catch (e: Exception) {
+            ResponseEntity.badRequest().body(e.message)
+        }
+    }
+
 
     @PostMapping("/add")
     fun addCard(
